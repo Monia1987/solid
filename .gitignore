@@ -2,4 +2,10 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/day-1/TelegramBot/.vs/TelegramBot/v14
+/day-1/TelegramBot/.vs
+/day-1/TelegramBot/TelegramBot.App/bin
+/day-1/TelegramBot/TelegramBot.App/obj
+/day-1/TelegramBot/TelegramBot.Core/bin
+/day-1/TelegramBot/TelegramBot.Core/obj
+/day-1/TelegramBot/packages
+*.user
