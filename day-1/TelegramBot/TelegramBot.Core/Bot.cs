@@ -1,46 +1,61 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+using TelegramBot.Core.Commands;
+using TelegramBot.Core.Context;
+using TelegramBot.Core.Input;
 
 namespace TelegramBot.Core
 {
     public class Bot
     {
-        private BotInfo botInfo;
-        private TelegramBotClient botClient;
-        private User botUser;
+        private TelegramBotClient _botClient;
+        private User _botUser;
 
+        public BotInfo BotInfo { get; internal set; }
 
-        public Bot(BotInfo botInfo)
+        internal IList<BaseCommand> Commands { get; set; }
+
+        internal Bot()
         {
-            this.botInfo = botInfo;
+            Commands = new List<BaseCommand>();
         }
-
+        
         public async Task Awake()
         {
-            botClient = new TelegramBotClient(botInfo.ApiToken);
-            botUser = await botClient.GetMeAsync();
+            _botClient = new TelegramBotClient(BotInfo.ApiToken);
+            _botUser = await _botClient.GetMeAsync();
         }
 
         public async Task Run()
         {
-            var offset = 0;
-
-            while (true)
+            using (var context = new CommandContext())
             {
-                var updates = await botClient.GetUpdatesAsync(offset);
-
-                foreach (var update in updates)
+                while (true)
                 {
-                    await botClient.SendChatActionAsync(update.Message.Chat.Id, ChatAction.Typing);
+                    var updates = await _botClient.GetUpdatesAsync(context.Offset);
+
+                    foreach (var update in updates)
+                    {
+                        context.ChatId = update.Message.Chat.Id;
+
+                        var commandInput = new TelegramBotCommandInput(update);
+                        foreach (var botCommand in Commands)
+                        {
+                            if (botCommand.Context == null)
+                                botCommand.Context = context;
+
+                            if (botCommand.IsApplicable(commandInput))
+                                await botCommand.Execute(_botClient, commandInput);
+                        }
+
+                        context.Offset = update.Id + 1;
+                        context.LastCommandId = null;
+                    }
+
                     await Task.Delay(1000);
-                    await botClient.SendTextMessageAsync(update.Message.Chat.Id, "May the force be with you");
-
-                    offset = update.Id + 1;
                 }
-
-                await Task.Delay(1000);
             }
         }
     }
