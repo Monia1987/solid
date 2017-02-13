@@ -1,4 +1,4 @@
-namespace TelegramBot.App.Models
+namespace TelegramBot.App.Models.WeatherModels
 {
     public class Weather
     {

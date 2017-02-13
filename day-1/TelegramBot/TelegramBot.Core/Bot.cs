@@ -3,7 +3,10 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using TelegramBot.Core.Commands;
+using TelegramBot.Core.Conditions;
 using TelegramBot.Core.Context;
+using TelegramBot.Core.Factory;
+using TelegramBot.Core.Info;
 using TelegramBot.Core.Input;
 
 namespace TelegramBot.Core
@@ -14,12 +17,13 @@ namespace TelegramBot.Core
         private User _botUser;
 
         public BotInfo BotInfo { get; internal set; }
+        internal IDictionary<ICommandCondition, IList<CommandInfo>> Commands { get; set; }
+        protected ICommandFactory CommandFactory { get; set; }
 
-        internal IList<BaseCommand> Commands { get; set; }
-
-        internal Bot()
+        public Bot(ICommandFactory commandFactory)
         {
-            Commands = new List<BaseCommand>();
+            Commands = new Dictionary<ICommandCondition, IList<CommandInfo>>();
+            CommandFactory = commandFactory;
         }
         
         public async Task Awake()
@@ -35,19 +39,21 @@ namespace TelegramBot.Core
                 while (true)
                 {
                     var updates = await _botClient.GetUpdatesAsync(context.Offset);
-
                     foreach (var update in updates)
                     {
                         context.ChatId = update.Message.Chat.Id;
-
                         var commandInput = new TelegramBotCommandInput(update);
-                        foreach (var botCommand in Commands)
-                        {
-                            if (botCommand.Context == null)
-                                botCommand.Context = context;
 
-                            if (botCommand.IsApplicable(commandInput))
-                                await botCommand.Execute(_botClient, commandInput);
+                        foreach (var command in Commands)
+                        {
+                            if (!await command.Key.Check(commandInput))
+                                continue;
+
+                            foreach (var commandInfo in command.Value)
+                            {
+                                var commandInstance = CommandFactory.Create(commandInfo, context, _botClient);
+                                await commandInstance.Execute(commandInput);
+                            }
                         }
 
                         context.Offset = update.Id + 1;

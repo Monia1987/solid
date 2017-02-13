@@ -1,26 +1,32 @@
-﻿using TelegramBot.Core.Commands;
+﻿using System.Collections.Generic;
+using Microsoft.Practices.Unity;
+using TelegramBot.Core.Commands;
+using TelegramBot.Core.Conditions;
+using TelegramBot.Core.Info;
 
 namespace TelegramBot.Core.Builders
 {
-    public class BotBuilder
+    public class BotBuilder: IBotBuilder, IPrepearedBotBuilder
     {
         private readonly Bot _bot;
 
-        public BotBuilder()
+        public BotBuilder(IUnityContainer container)
         {
-            _bot = new Bot();
+            _bot = container.Resolve<Bot>();
         }
 
-        public BotBuilder RegisterCommand<TCommand>(TCommand command, params string[] keys) where TCommand : BaseCommand
+        public IPrepearedBotBuilder RegisterCommand<TCommand,TCondition>()
+            where TCommand: IBotCommand
+            where TCondition: ICommandCondition, new()
         {
-            foreach (var key in keys)
-                command.RegisterCommandKey(key);
+            var commandInfo = CreateCommandInfo<TCommand>();
+            var condition = CreateCommandCondition<TCondition>();
+            RegisterCommand(condition, commandInfo);
 
-            _bot.Commands.Add(command);
             return this;
         }
 
-        public BotBuilder SetInfo(BotInfo info)
+        public IPrepearedBotBuilder SetInfo(BotInfo info)
         {
             _bot.BotInfo = info;
             return this;
@@ -30,5 +36,33 @@ namespace TelegramBot.Core.Builders
         {
             return _bot;
         }
+
+        #region protected
+
+        protected virtual CommandInfo CreateCommandInfo<TCommand>()
+             where TCommand : IBotCommand
+        {
+            return new CommandInfo
+                {
+                    CommandType = typeof(TCommand),
+                    CommandName = typeof(TCommand).ToString()
+                };
+        }
+
+        protected virtual ICommandCondition CreateCommandCondition<TCondition>()
+            where TCondition : ICommandCondition, new()
+        {
+            return new TCondition();
+        }
+
+        protected virtual void RegisterCommand(ICommandCondition condition, CommandInfo commandInfo)
+        {
+            if (!_bot.Commands.ContainsKey(condition))
+                _bot.Commands.Add(condition, new List<CommandInfo>());
+
+            _bot.Commands[condition].Add(commandInfo);
+        }
+
+        #endregion
     }
 }

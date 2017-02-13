@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TelegramBot.App.Models
+namespace TelegramBot.App.Models.WeatherModels
 {
     public class WeatherDto
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
-using TelegramBot.App.Models;
+using TelegramBot.App.Models.WeatherModels;
 
 namespace TelegramBot.App.Services
 {
@@ -26,11 +26,11 @@ namespace TelegramBot.App.Services
                 var details = weatherResponce.Weather.First();
 
                 return new Weather
-                {
-                    Name = weatherResponce.Name,
-                    Description = details.Description,
-                    Temperature = weatherResponce.Main.Temp
-                };
+                    {
+                        Name = weatherResponce.Name,
+                        Description = details.Description,
+                        Temperature = weatherResponce.Main.Temp
+                    };
             }
         }
     }

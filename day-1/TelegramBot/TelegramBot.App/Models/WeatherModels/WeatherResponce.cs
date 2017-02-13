@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace TelegramBot.App.Models
+namespace TelegramBot.App.Models.WeatherModels
 {
     public class WeatherResponce
     {
