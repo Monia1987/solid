@@ -72,8 +72,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\RateCommand.cs" />
     <Compile Include="Commands\WeatherCommand.cs" />
     <Compile Include="Commands\DefaultCommand.cs" />
+    <Compile Include="Conditions\RateCondition.cs" />
     <Compile Include="Conditions\WeatherCondition.cs" />
     <Compile Include="Models\RateModels\RateItem.cs" />
     <Compile Include="Models\WeatherModels\Clouds.cs" />

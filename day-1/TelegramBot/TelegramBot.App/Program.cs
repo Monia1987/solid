@@ -22,6 +22,7 @@ namespace TelegramBot.App
 
             var bot = botBuilder.SetInfo(botInfo)
                 .RegisterCommand<WeatherCommand, WeatherCondition>()
+                .RegisterCommand<RateCommand, RateCondition>()
                 .RegisterCommand<DefaultCommand, RunAlwaysCondition>()
                 .Build();
 
@@ -39,9 +40,11 @@ namespace TelegramBot.App
 
             unityContainer.RegisterType<DummyMessagesService, DummyMessagesService>();
             unityContainer.RegisterType<WeatherService, WeatherService>();
+            unityContainer.RegisterType<RateService, RateService>();
 
             unityContainer.RegisterType<DefaultCommand, DefaultCommand>();
             unityContainer.RegisterType<WeatherCommand, WeatherCommand>();
+            unityContainer.RegisterType<RateCommand, RateCommand>();
 
             return unityContainer;
         }
