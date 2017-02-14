@@ -15,12 +15,13 @@ namespace TelegramBot.Core.Factory
             _container = container;
         }
 
-        public IBotCommand Create(CommandInfo commandInfo, ICommandContext context, ITelegramBotClient botClient)
+        public IBotCommand Create(CommandInfo commandInfo, ICommandContext context, ITelegramBotClient botClient, BotLogger logger)
         {
             var overrides = new ParameterOverrides
                 {
                         {"context", context},
-                        {"botClient", botClient}
+                        {"botClient", botClient},
+                        {"logger", logger }
                 };
 
             return _container.Resolve(commandInfo.CommandType, overrides) as IBotCommand;

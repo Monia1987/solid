@@ -9,10 +9,18 @@ namespace TelegramBot.Core.Builders
     public class BotBuilder: IBotBuilder, IPrepearedBotBuilder
     {
         private readonly Bot _bot;
+        private readonly BotLogger _logger;
+
 
         public BotBuilder(IUnityContainer container)
         {
+            _logger = ResolveLogger(container);
+
             _bot = container.Resolve<Bot>();
+            _bot.Logger = _logger;
+
+            _logger.Info("Bot resolved");
+            
         }
 
         public IPrepearedBotBuilder RegisterCommand<TCommand,TCondition>()
@@ -23,12 +31,15 @@ namespace TelegramBot.Core.Builders
             var condition = CreateCommandCondition<TCondition>();
             RegisterCommand(condition, commandInfo);
 
+            _logger.Info($"Command {commandInfo} registered.");
+
             return this;
         }
 
         public IPrepearedBotBuilder SetInfo(BotInfo info)
         {
             _bot.BotInfo = info;
+            _logger.Info($"Api key set.");
             return this;
         }
 
@@ -38,6 +49,21 @@ namespace TelegramBot.Core.Builders
         }
 
         #region protected
+
+        private BotLogger ResolveLogger(IUnityContainer container)
+        {
+            IBotLogger innerLogger = null;
+            try
+            {
+                innerLogger = container.Resolve<IBotLogger>();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return new BotLogger(innerLogger);
+        }
 
         protected virtual CommandInfo CreateCommandInfo<TCommand>()
              where TCommand : IBotCommand

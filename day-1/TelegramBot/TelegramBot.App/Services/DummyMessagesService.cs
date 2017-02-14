@@ -8,7 +8,12 @@ namespace TelegramBot.App.Services
     {
         private readonly List<string> _phrases = new List<string>
             {
-                "May the force be with you",
+                "May the force be with you.",
+                "May the force be with you.",
+                "May the force be with you.",
+                "May the force be with you.",
+                "May the force be with you.",
+                "May the force be with you.",
                 "Do. Or do not. There is no try.",
                 "In my experience there is no such thing as luck.",
                 "I find your lack of faith disturbing.",

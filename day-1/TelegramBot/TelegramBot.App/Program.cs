@@ -1,8 +1,9 @@
-﻿using System.ComponentModel;
-using System.Configuration;
+﻿using System.Configuration;
 using Microsoft.Practices.Unity;
 using TelegramBot.App.Commands;
 using TelegramBot.App.Conditions;
+using TelegramBot.App.Logger;
+using TelegramBot.App.Parsers;
 using TelegramBot.App.Services;
 using TelegramBot.Core;
 using TelegramBot.Core.Builders;
@@ -37,10 +38,14 @@ namespace TelegramBot.App
             unityContainer.RegisterType<ICommandFactory, CommandFactory>();
             unityContainer.RegisterType<Bot, Bot>();
 
+            unityContainer.RegisterType<IBotLogger, ConsoleLogger>();
 
             unityContainer.RegisterType<DummyMessagesService, DummyMessagesService>();
             unityContainer.RegisterType<WeatherService, WeatherService>();
             unityContainer.RegisterType<RateService, RateService>();
+            unityContainer.RegisterType<HttpService, HttpService>();
+
+            unityContainer.RegisterType<JsonParser, JsonParser>();
 
             unityContainer.RegisterType<DefaultCommand, DefaultCommand>();
             unityContainer.RegisterType<WeatherCommand, WeatherCommand>();

@@ -13,15 +13,26 @@ namespace TelegramBot.Core.Commands
         protected ICommandContext Context { get; set; }
         protected ITelegramBotClient Client { get; set; }
 
-        protected BaseCommand(ICommandContext context, ITelegramBotClient botClient)
+        protected BotLogger Logger { get; set; }
+
+        protected BaseCommand(ICommandContext context, ITelegramBotClient botClient, BotLogger logger)
         {
+            Logger = logger;
             Client = botClient;
             Context = context;
         }
 
         public async Task Execute(ICommandInput input)
         {
-            await OnExecute(input);
+            Logger.Info($"I'm trying to execute {GetType()}");
+            try
+            {
+                await OnExecute(input);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Something went wrong");
+            }
 
             Context.LastCommandId = Id;
         }

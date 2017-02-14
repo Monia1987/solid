@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using TelegramBot.App.Services;
+using TelegramBot.Core;
 using TelegramBot.Core.Commands;
 using TelegramBot.Core.Context;
 using TelegramBot.Core.Input;
@@ -16,8 +16,8 @@ namespace TelegramBot.App.Commands
 
         public RateService RateService { get; set; }
 
-        public RateCommand(ICommandContext context, ITelegramBotClient botClient, RateService rateService)
-            : base(context, botClient)
+        public RateCommand(ICommandContext context, ITelegramBotClient botClient, BotLogger logger, RateService rateService)
+            : base(context, botClient, logger)
         {
             RateService = rateService;
         }

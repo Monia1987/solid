@@ -1,37 +1,40 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 using TelegramBot.App.Models.WeatherModels;
+using TelegramBot.App.Parsers;
 
 namespace TelegramBot.App.Services
 {
     public class WeatherService
     {
+        private readonly HttpService _httpService;
+        private readonly JsonParser _jsonParser;
+
         string url = "http://api.openweathermap.org/data/2.5/weather?q={0}&APPID={1}&units=metric";
         string weatherApiKey = "ec259b32688dc1c1d087ebc30cbff9ed";
 
-        public Weather GetWeatherForCity(string city)
+        public WeatherService(HttpService httpService, JsonParser jsonParser)
+        {
+            _httpService = httpService;
+            _jsonParser = jsonParser;
+        }
+
+        public async Task<Weather> GetWeatherForCityAsync(string city)
         {
             WebUtility.UrlEncode(city);
 
-            WebRequest request = WebRequest.Create(string.Format(url, city, weatherApiKey));
-            WebResponse response = request.GetResponse();
-            using (var streamReader = new StreamReader(response.GetResponseStream()))
-            {
-                string responseString = streamReader.ReadToEnd();
+            var weatherJson = await _httpService.GetAsync(string.Format(url, city, weatherApiKey));
+            var weatherResponce = _jsonParser.Parse<WeatherResponce>(weatherJson);
+            var details = weatherResponce.Weather.First();
 
-                var weatherResponce = JsonConvert.DeserializeObject<WeatherResponce>(responseString);
-
-                var details = weatherResponce.Weather.First();
-
-                return new Weather
-                    {
-                        Name = weatherResponce.Name,
-                        Description = details.Description,
-                        Temperature = weatherResponce.Main.Temp
-                    };
-            }
+            return new Weather
+                {
+                    Name = weatherResponce.Name,
+                    Description = details.Description,
+                    Temperature = weatherResponce.Main.Temp
+                };
         }
     }
 }
+

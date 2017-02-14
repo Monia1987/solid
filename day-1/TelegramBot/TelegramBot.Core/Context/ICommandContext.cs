@@ -7,5 +7,7 @@ namespace TelegramBot.Core.Context
         int Offset { get; }
         long ChatId { get; }
         Guid? LastCommandId { get; set; }
+        object this[string key] { get; set; }
+        
     }
 }

@@ -11,7 +11,6 @@ namespace TelegramBot.Core.Builders
     public interface IPrepearedBotBuilder
     {
         Bot Build();
-
         IPrepearedBotBuilder RegisterCommand<TCommand, TCondition>()
             where TCommand : IBotCommand
             where TCondition : ICommandCondition, new();

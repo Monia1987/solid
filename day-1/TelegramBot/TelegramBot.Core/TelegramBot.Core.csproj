@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
+    <Compile Include="BotLogger.cs" />
     <Compile Include="Builders\BotBuilder.cs" />
     <Compile Include="BotInfo.cs" />
     <Compile Include="Builders\IBotBuilder.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Factory\ICommandFactory.cs" />
     <Compile Include="Commands\IBotCommand.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
+    <Compile Include="Logger\IBotLogger.cs" />
     <Compile Include="Info\CommandInfo.cs" />
     <Compile Include="Conditions\RunAlwaysCondition.cs" />
     <Compile Include="Conditions\ICommandCondition.cs" />
