@@ -5,7 +5,6 @@ using Telegram.Bot.Types.Enums;
 using TelegramBot.App.Services;
 using TelegramBot.Core;
 using TelegramBot.Core.Commands;
-using TelegramBot.Core.Context;
 using TelegramBot.Core.Input;
 
 namespace TelegramBot.App.Commands
@@ -16,18 +15,18 @@ namespace TelegramBot.App.Commands
 
         public RateService RateService { get; set; }
 
-        public RateCommand(ICommandContext context, ITelegramBotClient botClient, BotLogger logger, RateService rateService)
-            : base(context, botClient, logger)
+        public RateCommand(ITelegramBotClient botClient, BotLogger logger, RateService rateService)
+            : base(botClient, logger)
         {
             RateService = rateService;
         }
 
         public override async Task OnExecute(ICommandInput input)
         {
-            await Client.SendChatActionAsync(Context.ChatId, ChatAction.Typing);
+            await Client.SendChatActionAsync(input.ChatId, ChatAction.Typing);
             
             var rate = await RateService.GetTodayUsdRate();
-            var t = await Client.SendTextMessageAsync(Context.ChatId, $"Rate: {rate.Rate}");
+            var t = await Client.SendTextMessageAsync(input.ChatId, $"Rate: {rate.Rate}");
         }
         
     }

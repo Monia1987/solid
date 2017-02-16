@@ -15,15 +15,19 @@ namespace TelegramBot.Core.Input
             {
                 Text = update.Message.Text;
                 MessageType = update.Message.Type;
+                ChatId = update.Message.Chat.Id;
             }
 
             UpdateId = update.Id;
-            
         }
 
         public string Text { get; }
 
         public int UpdateId { get; }
+
+        public long ChatId { get; }
+
+        public bool Processed { get; set; }
 
         public MessageType MessageType { get; set; }
     }

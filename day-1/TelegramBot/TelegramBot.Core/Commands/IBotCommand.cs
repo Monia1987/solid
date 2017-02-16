@@ -8,6 +8,6 @@ namespace TelegramBot.Core.Commands
     {
         Guid Id { get; }
 
-        Task Execute(ICommandInput input);
+        Task<bool> Execute(ICommandInput input);
     }
 }

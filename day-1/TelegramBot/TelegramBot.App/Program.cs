@@ -24,7 +24,7 @@ namespace TelegramBot.App
             var bot = botBuilder.SetInfo(botInfo)
                 .RegisterCommand<WeatherCommand, WeatherCondition>()
                 .RegisterCommand<RateCommand, RateCondition>()
-                .RegisterCommand<DefaultCommand, RunAlwaysCondition>()
+                .RegisterCommand<DefaultCommand, DefaultCommandCondition>()
                 .Build();
 
             bot.Awake().Wait();

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
 using Telegram.Bot;
 using TelegramBot.Core.Commands;
-using TelegramBot.Core.Context;
 using TelegramBot.Core.Info;
 
 namespace TelegramBot.Core.Factory
@@ -15,11 +14,10 @@ namespace TelegramBot.Core.Factory
             _container = container;
         }
 
-        public IBotCommand Create(CommandInfo commandInfo, ICommandContext context, ITelegramBotClient botClient, BotLogger logger)
+        public IBotCommand Create(CommandInfo commandInfo, ITelegramBotClient botClient, BotLogger logger)
         {
             var overrides = new ParameterOverrides
                 {
-                        {"context", context},
                         {"botClient", botClient},
                         {"logger", logger }
                 };

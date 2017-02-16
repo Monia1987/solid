@@ -5,7 +5,6 @@ using Telegram.Bot.Types.Enums;
 using TelegramBot.App.Services;
 using TelegramBot.Core;
 using TelegramBot.Core.Commands;
-using TelegramBot.Core.Context;
 using TelegramBot.Core.Input;
 
 namespace TelegramBot.App.Commands
@@ -16,8 +15,8 @@ namespace TelegramBot.App.Commands
 
         public override Guid Id => new Guid("2C2449E4-E0A0-435A-BC53-6725FBECC109");
 
-        public DefaultCommand(ICommandContext context, ITelegramBotClient botClient, BotLogger logger, DummyMessagesService messagesService) 
-            : base(context, botClient, logger)
+        public DefaultCommand(ITelegramBotClient botClient, BotLogger logger, DummyMessagesService messagesService) 
+            : base(botClient, logger)
         {
             _messagesService = messagesService;
         }
@@ -25,19 +24,10 @@ namespace TelegramBot.App.Commands
         
         public override async Task OnExecute(ICommandInput input)
         {
-            if (ShouldISpam() == false)
-                return;
-
-            await Client.SendChatActionAsync(Context.ChatId, ChatAction.Typing);
+            await Client.SendChatActionAsync(input.ChatId, ChatAction.Typing);
             await Task.Delay(1000);
-            await Client.SendTextMessageAsync(Context.ChatId, _messagesService.GetPhrase());
-
-            Context["test"] = 1;
+            await Client.SendTextMessageAsync(input.ChatId, _messagesService.GetPhrase());
         }
-
-        private bool ShouldISpam()
-        {
-            return Context.LastCommandId.HasValue == false;
-        }
+       
     }
 }

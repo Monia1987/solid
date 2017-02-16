@@ -6,7 +6,6 @@ using Telegram.Bot.Types.Enums;
 using TelegramBot.App.Services;
 using TelegramBot.Core;
 using TelegramBot.Core.Commands;
-using TelegramBot.Core.Context;
 using TelegramBot.Core.Input;
 
 namespace TelegramBot.App.Commands
@@ -17,21 +16,21 @@ namespace TelegramBot.App.Commands
 
         public WeatherService WeatherService { get; set; }
 
-        public WeatherCommand(ICommandContext context, ITelegramBotClient botClient, BotLogger logger, WeatherService weatherService)
-            : base(context, botClient, logger)
+        public WeatherCommand(ITelegramBotClient botClient, BotLogger logger, WeatherService weatherService)
+            : base(botClient, logger)
         {
             WeatherService = weatherService;
         }
 
         public override async Task OnExecute(ICommandInput input)
         {
-            await Client.SendChatActionAsync(Context.ChatId, ChatAction.Typing);
+            await Client.SendChatActionAsync(input.ChatId, ChatAction.Typing);
             var inputMessage = input.Text;
             var messageParts = inputMessage.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             var city = messageParts.Length == 1 ? "Minsk" : messageParts.Skip(1).First();
             var weather = await WeatherService.GetWeatherForCityAsync(city);
 
-            var t = await Client.SendTextMessageAsync(Context.ChatId, $"In {city} {weather.Description} and the temperature is {weather.Temperature:+#;-#}°C");
+            var t = await Client.SendTextMessageAsync(input.ChatId, $"In {city} {weather.Description} and the temperature is {weather.Temperature:+#;-#}°C");
         }
         
     }

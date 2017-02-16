@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using TelegramBot.Core.Conditions;
-using TelegramBot.Core.Context;
 using TelegramBot.Core.Factory;
 using TelegramBot.Core.Info;
 using TelegramBot.Core.Input;
@@ -36,38 +35,36 @@ namespace TelegramBot.Core
 
         public async Task Run()
         {
-            using (var context = new CommandContext())
+            var offset = 0;
+            Logger.Info($"Are you really want me to do some job? Ok...");
+            while (true)
             {
-                Logger.Info($"Are you really want me to do some job? Ok...");
-                while (true)
+                var updates = await _botClient.GetUpdatesAsync(offset);
+                foreach (var update in updates)
                 {
-                    var updates = await _botClient.GetUpdatesAsync(context.Offset);
-                    foreach (var update in updates)
+                    var commandInput = new TelegramBotCommandInput(update);
+
+                    Logger.Info($"So.. ChatId is {commandInput.ChatId}, message \"{commandInput.Text}\" bla-bla-bla...");
+
+                    foreach (var command in Commands)
                     {
-                        context.ChatId = update.Message.Chat.Id;
-                        var commandInput = new TelegramBotCommandInput(update);
+                        if (!await command.Key.Check(commandInput))
+                            continue;
 
-                        Logger.Info($"So.. ChatId is {context.ChatId}, message \"{commandInput.Text}\" bla-bla-bla...");
-
-                        foreach (var command in Commands)
+                        foreach (var commandInfo in command.Value)
                         {
-                            if (!await command.Key.Check(commandInput))
-                                continue;
-
-                            foreach (var commandInfo in command.Value)
-                            {
-                                var commandInstance = CommandFactory.Create(commandInfo, context, _botClient, Logger);
-                                await commandInstance.Execute(commandInput);
-                            }
+                            var commandInstance = CommandFactory.Create(commandInfo, _botClient, Logger);
+                            if (await commandInstance.Execute(commandInput))
+                                commandInput.Processed = true;
                         }
-
-                        context.Offset = update.Id + 1;
-                        context.LastCommandId = null;
                     }
 
-                    await Task.Delay(1000);
+                    offset = update.Id + 1;
                 }
+
+                await Task.Delay(1000);
             }
+
         }
     }
 }

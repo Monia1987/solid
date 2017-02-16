@@ -6,7 +6,9 @@ namespace TelegramBot.Core.Input
     {
         string Text { get; }
         int UpdateId { get; }
+        long ChatId { get; }
 
+        bool Processed { get; }
         MessageType MessageType { get; set; }
     }
 }

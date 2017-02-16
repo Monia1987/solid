@@ -80,10 +80,8 @@
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Logger\IBotLogger.cs" />
     <Compile Include="Info\CommandInfo.cs" />
-    <Compile Include="Conditions\RunAlwaysCondition.cs" />
+    <Compile Include="Conditions\DefaultCommandCondition.cs" />
     <Compile Include="Conditions\ICommandCondition.cs" />
-    <Compile Include="Context\CommandContext.cs" />
-    <Compile Include="Context\ICommandContext.cs" />
     <Compile Include="Input\ICommandInput.cs" />
     <Compile Include="Input\TelegramBotCommandInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
