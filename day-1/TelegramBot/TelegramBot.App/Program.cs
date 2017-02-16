@@ -38,7 +38,7 @@ namespace TelegramBot.App
             unityContainer.RegisterType<ICommandFactory, CommandFactory>();
             unityContainer.RegisterType<Bot, Bot>();
 
-            unityContainer.RegisterType<IBotLogger, ConsoleLogger>();
+            unityContainer.RegisterType<IBotLogger, Log4NetLogger>();
 
             unityContainer.RegisterType<DummyMessagesService, DummyMessagesService>();
             unityContainer.RegisterType<WeatherService, WeatherService>();
